@@ -17,7 +17,7 @@
     name: "{{ item }}"
     command: destroy
   with_items: "{{ running_vms.list_vms }}"
-  when: item is search("master") or item is search("worker")
+  when: item is search("master-{{ cluster }}") or item is search("worker-{{ cluster }}")
   become: yes
 
 - name: Undefine old master/worker VMs, if any
@@ -25,13 +25,13 @@
     name: "{{ item }}"
     command: undefine
   with_items: "{{ all_vms.list_vms }}"
-  when: item is search("master") or item is search("worker")
+  when: item is search("master-{{ cluster }}") or item is search("worker-{{ cluster }}")
   become: yes
 
 - name: Find old master VM Storage
   find:
     paths: "{{ default_libvirt_pool_dir }}"
-    patterns: '*-master,*-master.ign'
+    patterns: '*-master-{{ cluster }},*-master-{{ cluster }}.ign'
   register: find_results
   become: yes
 
@@ -45,7 +45,7 @@
 - name: Find old worker VM Storage
   find:
     paths: "{{ default_libvirt_pool_dir }}"
-    patterns: '*-worker,*-worker.ign'
+    patterns: '*-worker-{{ cluster }},*-worker-{{ cluster }}.ign'
   register: find_results
   become: yes
 

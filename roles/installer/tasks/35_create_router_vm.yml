@@ -1,0 +1,33 @@
+---
+- name: Delete previous qcow2 image
+  file:
+    path: "{{ default_libvirt_pool_dir }}/bootstrap_{{ cluster }}.qcow2"
+    state: absent
+
+- name: Copy qcow2 image to image pool
+  copy:
+    src: "{{ router_vm_image }}"
+    dest: "{{ default_libvirt_pool_dir }}/router_{{ cluster }}.qcow2"
+
+- name: Inject ssh key to router image
+  command: "virt-sysprep -a {{ default_libvirt_pool_dir }}/router_{{ cluster }}.qcow2 --ssh-inject root:file:{{ ansible_user_dir }}/.ssh/id_rsa.pub --selinux-relabel"
+  environment:
+    LIBGUESTFS_MEMSIZE: 2048
+
+- name: Define cluster vm
+  virt:
+    command: define
+    xml: '{{ lookup("template", "{{ role_path }}/templates/domain.xml.j2") }}'
+    autostart: yes
+  vars:
+    domain_name: router-{{ cluster }}
+    domain_memory: 2097152
+    domain_cpu: 1
+    domain_disk: "{{ default_libvirt_pool_dir }}/router_{{ cluster }}.qcow2"
+    domain_network: "baremetal-{{ cluster }}"
+    domain_mac: "52:54:00:45:7f:30"
+
+- name: Start router vm
+  virt:
+    name: router-{{ cluster }}
+    state: running

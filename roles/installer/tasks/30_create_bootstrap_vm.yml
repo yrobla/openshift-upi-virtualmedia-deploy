@@ -1,11 +1,11 @@
 ---
 - name: Delete previous qcow2 image
   file:
-    path: "{{ default_libvirt_pool_dir }}/bootstrap.qcow2"
+    path: "{{ default_libvirt_pool_dir }}/bootstrap_{{ cluster }}.qcow2"
     state: absent
 
 - name: Create new bootstrap qcow2 image
-  command: "qemu-img create -f qcow2 {{ default_libvirt_pool_dir }}/bootstrap.qcow2 60G"
+  command: "qemu-img create -f qcow2 {{ default_libvirt_pool_dir }}/bootstrap_{{ cluster }}.qcow2 60G"
 
 - name: Create default baremetal network
   virt_net:
@@ -41,7 +41,7 @@
     domain_memory: 8388608
     domain_cpu: 4
     domain_iso: "{{ cluster_config_dir }}/generated_isos/bootstrap.iso"
-    domain_disk: "{{ default_libvirt_pool_dir }}/bootstrap.qcow2"
+    domain_disk: "{{ default_libvirt_pool_dir }}/bootstrap_{{ cluster }}.qcow2"
     domain_network: "baremetal-{{ cluster }}"
     domain_mac: "52:54:00:45:7f:00"
 

@@ -1,12 +1,12 @@
 ---
 - name: Delete previous qcow2 images for master
   file:
-    path: "{{ default_libvirt_pool_dir }}/master-{{ item }}.qcow2"
+    path: "{{ default_libvirt_pool_dir }}/master-{{ cluster }}-{{ item }}.qcow2"
     state: absent
   with_sequence: start=1 end={{ num_masters }}
 
 - name: Create new master qcow2 images
-  command: "qemu-img create -f qcow2 {{ default_libvirt_pool_dir }}/master-{{ item }}.qcow2 60G"
+  command: "qemu-img create -f qcow2 {{ default_libvirt_pool_dir }}/master-{{ cluster }}-{{ item }}.qcow2 60G"
   with_sequence: start=1 end={{ num_masters }}
 
 - name: Define master vms
@@ -20,7 +20,7 @@
     domain_memory: 16777216
     domain_cpu: 4
     domain_iso: "{{ cluster_config_dir }}/generated_isos/master.iso"
-    domain_disk: "{{ default_libvirt_pool_dir }}/master-{{ item }}.qcow2"
+    domain_disk: "{{ default_libvirt_pool_dir }}/master-{{ cluster }}-{{ item }}.qcow2"
     domain_network: "baremetal-{{ cluster }}"
     domain_mac: "52:54:00:45:7f:0{{ item }}"
 
@@ -31,7 +31,7 @@
   with_sequence: start=1 end={{ num_masters }}
 
 - name: Create new worker qcow2 images
-  command: "qemu-img create -f qcow2 {{ default_libvirt_pool_dir }}/worker-{{ item }}.qcow2 60G"
+  command: "qemu-img create -f qcow2 {{ default_libvirt_pool_dir }}/worker-{{ cluster }}-{{ item }}.qcow2 60G"
   with_sequence: start=1 end={{ num_workers }}
 
 - name: Define worker vms
@@ -45,7 +45,7 @@
     domain_memory: 16777216
     domain_cpu: 4
     domain_iso: "{{ cluster_config_dir }}/generated_isos/worker.iso"
-    domain_disk: "{{ default_libvirt_pool_dir }}/worker-{{ item }}.qcow2"
+    domain_disk: "{{ default_libvirt_pool_dir }}/worker-{{ cluster }}-{{ item }}.qcow2"
     domain_network: "baremetal-{{ cluster }}"
     domain_mac: "52:54:00:45:7f:1{{ item }}"
 
