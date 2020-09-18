@@ -53,7 +53,7 @@
 
 - name: Restart libvirt to apply rules
   service:
-    name: libvirt
+    name: libvirtd
     state: restarted
 
 - name: Start bootstrap vm
