@@ -6,17 +6,19 @@ pipeline {
     }
 
     parameters {
-        string(name:"PODMAN_REGISTRY", defaultValue: "quay.io/yrobla", description: "Where to push the built image", trim: true)
-        string(name:"IMAGE_NAME", defaultValue: "coreos-live-cd", description: "Name of the image to push", trim: true)
         string(name:"GIT_REPO", defaultValue: "git://github.com/yrobla/openshift-upi-virtualmedia-deploy.git", description: "Repo to clone containing the Dockerfile for the image", trim: true)
         string(name:"GIT_BRANCH", defaultValue: "master", description: "Branch for the git repo", trim: true)
-        booleanParam(name:"PUSH_TO_REGISTRY", defaultValue: false, description: "Push generated image to registry")
+        string(name:"INVENTORY_PATH", defaultValue: "/opt/openshift-upi-virtualmedia-deploy/inventory/hosts", description: "Path for the ansible inventory", trim: true)
+	booleanParam(name:"PREPARE_NODE", defaultValue: true, description: "Execute node preparation step")
+	booleanParam(name:"PREPARE_AND_CONFIGURE_INSTALLER", defaultValue: true, description: "Execute installer preparation and configuration step")
+	booleanParam(name:"INSTALL_CLUSTER", defaultValue: true, description: "Install openshift cluster")
     }
 
     agent { label 'worker' }
 
     environment {
             BASE_REPO_DIR = sh(returnStdout: true, script: "echo $WORKSPACE/openshift-upi-virtualmedia-deploy").trim()
+
     }
 
     stages {
@@ -38,33 +40,59 @@ pipeline {
                 sh '''
 		# clone the repo
                 git -c http.sslVerify=false clone --single-branch --branch $GIT_BRANCH $GIT_REPO $BASE_REPO_DIR
+
+		# copy inventory to workspace
+
                 '''
 
             }
         }
 
-        stage('Build image') {            
-            steps {
-                sh '''
-		pushd $BASE_REPO_DIR/images
-		podman build -t ${PODMAN_REGISTRY}/${IMAGE_NAME} .
-		popd
-                '''
-            }
-        }
-        stage('Push the image to registry') {
+        stage('Prepare node') {            
             when {
                 anyOf {
-                    environment name: 'PUSH_TO_REGISTRY', value: 'true'
+                    environment name: 'PREPARE_NODE', value: 'true'
                 }
             }
             steps {
                 sh '''
-                    podman login ${PODMAN_REGISTRY}
-		    podman push ${PODMAN_REGISTRY}/${IMAGE_NAME}
+		pushd $BASE_REPO_DIR
+		ansible-playbook -v -i ${INVENTORY_PATH} playbook.yml --tags=node_preparation
+		popd
                 '''
             }
         }
+
+        stage('Prepare and configure installer') {            
+            when {
+                anyOf {
+                    environment name: 'PREPARE_AND_CONFIGURE_INSTALLER', value: 'true'
+                }
+            }
+            steps {
+                sh '''
+		pushd $BASE_REPO_DIR
+		ansible-playbook -v -i ${INVENTORY_PATH} playbook.yml --tags=installer_preparation,installer_configuration
+		popd
+                '''
+            }
+        }
+
+        stage('Install cluster') {            
+            when {
+                anyOf {
+                    environment name: 'INSTALL_CLUSTER', value: 'true'
+                }
+            }
+            steps {
+                sh '''
+		pushd $BASE_REPO_DIR
+		ansible-playbook -v -i ${INVENTORY_PATH} playbook.yml --tags=installer
+		popd
+                '''
+            }
+        }
+
 
     }
 }  // pipeline
