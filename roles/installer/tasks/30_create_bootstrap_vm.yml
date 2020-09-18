@@ -31,6 +31,11 @@
     state: enabled
     immediate: yes
 
+- name: Restart libvirt to apply rules
+  service:
+    name: libvirtd
+    state: restarted
+
 - name: Remove iptables reject rules
   command: "iptables -D FORWARD -j REJECT  {{ item }} virbr-{{ cluster }}"
   with_items:
@@ -50,11 +55,6 @@
     domain_disk: "{{ default_libvirt_pool_dir }}/bootstrap_{{ cluster }}.qcow2"
     domain_network: "baremetal-{{ cluster }}"
     domain_mac: "52:54:00:45:7f:00"
-
-- name: Restart libvirt to apply rules
-  service:
-    name: libvirtd
-    state: restarted
 
 - name: Start bootstrap vm
   virt:
