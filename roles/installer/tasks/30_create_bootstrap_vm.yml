@@ -31,6 +31,12 @@
     state: enabled
     immediate: yes
 
+- name: Remove iptables reject rules
+  command: "iptables -D FORWARD -j REJECT  {{ item }} virbr-{{ cluster }}"
+  with_items:
+    - "-i "
+    - "-o"
+
 - name: Define bootstrap vm
   virt:
     command: define
