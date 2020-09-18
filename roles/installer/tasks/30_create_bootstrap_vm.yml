@@ -51,6 +51,11 @@
     domain_network: "baremetal-{{ cluster }}"
     domain_mac: "52:54:00:45:7f:00"
 
+- name: Restart libvirt to apply rules
+  service:
+    name: libvirt
+    state: restarted
+
 - name: Start bootstrap vm
   virt:
     name: bootstrap-{{ cluster }}
