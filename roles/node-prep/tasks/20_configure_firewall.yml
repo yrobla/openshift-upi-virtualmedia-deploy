@@ -1,18 +1,18 @@
 ---
 - name: Configure firewalld
   block:
-    - name: Enable HTTP for firewalld
+    - name: Enable ports for firewalld
       firewalld:
-        service: http
+        port: "{{ item }}"
         permanent: yes
         state: enabled
         immediate: yes
       become: yes
-    - name: Enable rhcos_cache port for firewalld
-      firewalld:
-        port: "{{ webserver_caching_port_container }}/tcp"
-        permanent: yes
-        state: enabled
-        immediate: yes
-      become: yes
+      with_items:
+        - 80/tcp
+        - 5000/tcp
+        - 53/tcp
+        - 53/udp
+        - 6443/tcp
+        - 22623/tcp
 
