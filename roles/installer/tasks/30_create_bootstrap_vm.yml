@@ -26,7 +26,7 @@
 - name: Add interface to public zone
   firewalld:
     zone: public
-    interface: virbr0
+    interface: virbr-{{ cluster }}
     permanent: yes
     state: enabled
     immediate: yes
