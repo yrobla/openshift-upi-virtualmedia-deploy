@@ -5,7 +5,7 @@
       <port start='1024' end='65535'/>
     </nat>
   </forward>
-  <bridge name='virbr-{{ cluster }}' stp='on' delay='0' />
+  <bridge name='virbr-{{ cluster }}' stp='on' delay='0' zone="trusted" />
   <domain name='{{ cluster }}.{{ domain }}' />
   <ip address='{{ gateway_ip }}' netmask='255.255.255.0'>
     <dhcp>
