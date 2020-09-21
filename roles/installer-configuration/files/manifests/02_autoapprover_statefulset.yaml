@@ -43,6 +43,6 @@ spec:
 
           unset KUBECONFIG
           while true; do
-            oc get csr -ojson | jq -r '.items[] | select(.status == {} ) | .metadata.name' | xargs oc adm certificate approve
+            oc get csr -ojson | jq -r '.items[] | select(.status == {} ) | .metadata.name' | xargs oc adm certificate approve || true
             sleep 60
           done
