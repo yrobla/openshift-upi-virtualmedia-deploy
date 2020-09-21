@@ -23,25 +23,6 @@
     name: baremetal-{{ cluster }}
   when: virtualized_install
 
-- name: Add interface to public zone
-  firewalld:
-    zone: public
-    interface: virbr-{{ cluster }}
-    permanent: yes
-    state: enabled
-    immediate: yes
-
-- name: Restart libvirt to apply rules
-  service:
-    name: libvirtd
-    state: restarted
-
-- name: Remove iptables reject rules
-  command: "iptables -D FORWARD -j REJECT  {{ item }} virbr-{{ cluster }}"
-  with_items:
-    - "-i "
-    - "-o"
-
 - name: Define bootstrap vm
   virt:
     command: define
