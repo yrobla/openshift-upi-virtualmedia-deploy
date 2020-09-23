@@ -1,11 +1,11 @@
 ---
 - name: Get list of all VMs
-  command: "virsh list --all --name | grep router-{{ cluster }}"
+  shell: "virsh list --all --name | grep router-{{ cluster }}"
   register: all_vms
   become: yes
 
 - name: Get list of all running VMs
-  command: "virsh list --name | grep router-{{ cluster }}"
+  shell: "virsh list --name | grep router-{{ cluster }}"
   register: running_vms
   become: yes
 
