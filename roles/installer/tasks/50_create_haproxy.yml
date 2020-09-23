@@ -1,9 +1,15 @@
 ---
+- name: Wait until router vm is available
+  wait_for_connection:
+    delay: 60
+    timeout: 300
+  delegate_to: "{{ groups['router_vm'][0] }}"
+
 - name: Remove previous running haproxy
   podman_container:
     name: haproxy_{{ cluster }}
     state: absent
-  delegate_to: "{{ groups['registry_host'][0] }}"
+  delegate_to: "{{ groups['router_vm'][0] }}"
   
 - name: Generate haproxy cfg file
   template:
@@ -13,16 +19,18 @@
     group: "{{ ansible_user }}"
   vars:
     gateway_with_mask: "{{ gateway_ip }}/24"
-  delegate_to: "{{ groups['registry_host'][0] }}"
+  delegate_to: "{{ groups['router_vm'][0] }}"
 
 - name: Create tmp directory for haproxy
   tempfile:
     state: directory
   register: tempdiroutput
+  delegate_to: "{{ groups['router_vm'][0] }}"
 
 - name: Set fact for tmp directory
   set_fact:
     tempdir: "{{ tempdiroutput.path }}"
+  delegate_to: "{{ groups['router_vm'][0] }}"
 
 - name: Start haproxy for the cluster
   podman_container:
@@ -32,4 +40,4 @@
     volumes:
       - "{{ cluster_config_dir }}:/usr/local/etc/haproxy"
       - "{{ tempdir }}:/var/lib/haproxy"
-  delegate_to: "{{ groups['registry_host'][0] }}"
+  delegate_to: "{{ groups['router_vm'][0] }}"
