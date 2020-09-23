@@ -1,7 +1,7 @@
 local=/{{ cluster }}.{{ domain }}/
 server=/{{ cluster }}.{{ domain }}/{{ gateway_ip }}
-address=/.apps.{{ cluster }}.{{ domain }}/{{ api_vip }}
-address=/api.{{ cluster }}.{{ domain }}/{{ api_vip }}
-address=/api-int.{{ cluster }}.{{ domain }}/{{ api_vip }}
+address=/.apps.{{ cluster }}.{{ domain }}/{{ groups['router_vm'][0] }}
+address=/api.{{ cluster }}.{{ domain }}/{{ groups['router_vm'][0] }}
+address=/api-int.{{ cluster }}.{{ domain }}/{{ groups['router_vm'][0] }}
 address=/registry.{{ cluster }}.{{ domain }}/{{ hypervisor_vip }}
 
