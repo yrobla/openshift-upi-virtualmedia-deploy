@@ -17,11 +17,17 @@
     state: absent
   remote_user: root
   delegate_to: "{{ groups['router_vm'][0] }}"
+
+- name: Create haproxy directory
+  file:
+    path: /opt/haproxy
+    state: directory
+    mode: '0755'
   
 - name: Generate haproxy cfg file
   template:
     src: "{{ role_path }}/templates/haproxy.cfg.j2"
-    dest: "{{ cluster_config_dir }}/haproxy.cfg"
+    dest: "/opt/haproxy/haproxy.cfg"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
   vars:
@@ -48,7 +54,7 @@
     image: haproxy:1.7
     network: host
     volumes:
-      - "{{ cluster_config_dir }}:/usr/local/etc/haproxy"
+      - "/opt/haproxy:/usr/local/etc/haproxy"
       - "{{ tempdir }}:/var/lib/haproxy"
   remote_user: root
   delegate_to: "{{ groups['router_vm'][0] }}"
