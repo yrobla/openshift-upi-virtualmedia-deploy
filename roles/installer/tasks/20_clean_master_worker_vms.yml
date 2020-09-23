@@ -1,14 +1,11 @@
 ---
 - name: Get list of all VMs
-  virt:
-    command: list_vms
+  command: "virsh list --all --name | grep -E 'master-{{ cluster }}|worker-{{ cluster }}'"
   register: all_vms
   become: yes
 
 - name: Get list of all running VMs
-  virt:
-    command: list_vms
-    state: running
+  command: "virsh list --name | grep -E 'master-{{ cluster }}|worker-{{ cluster }}'"
   register: running_vms
   become: yes
 
@@ -16,16 +13,14 @@
   virt:
     name: "{{ item }}"
     command: destroy
-  with_items: "{{ running_vms.list_vms }}"
-  when: item | regex_search("master-{{ cluster }}") or item | regex_search("worker-{{ cluster }}")
+  with_items: "{{ running_vms.results }}"
   become: yes
 
 - name: Undefine old master/worker VMs, if any
   virt:
     name: "{{ item }}"
     command: undefine
-  with_items: "{{ all_vms.list_vms }}"
-  when: item | regex_search("master-{{ cluster }}") or item | regex_search("worker-{{ cluster }}")
+  with_items: "{{ all_vms.results }}"
   become: yes
 
 - name: Find old master VM Storage
