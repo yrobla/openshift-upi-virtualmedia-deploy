@@ -4,6 +4,13 @@
   remote_user: root
   delegate_to: "{{ groups['router_vm'][0] }}"
 
+- name: Install dependencies for haproxy
+  yum:
+    name: podman
+    state: present
+  remote_user: root
+  delegate_to: "{{ groups['router_vm'][0] }}"
+
 - name: Remove previous running haproxy
   podman_container:
     name: haproxy_{{ cluster }}
