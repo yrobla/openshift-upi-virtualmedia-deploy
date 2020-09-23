@@ -8,6 +8,7 @@
   podman_container:
     name: haproxy_{{ cluster }}
     state: absent
+  remote_user: root
   delegate_to: "{{ groups['router_vm'][0] }}"
   
 - name: Generate haproxy cfg file
@@ -18,17 +19,20 @@
     group: "{{ ansible_user }}"
   vars:
     gateway_with_mask: "{{ gateway_ip }}/24"
+  remote_user: root
   delegate_to: "{{ groups['router_vm'][0] }}"
 
 - name: Create tmp directory for haproxy
   tempfile:
     state: directory
   register: tempdiroutput
+  remote_user: root
   delegate_to: "{{ groups['router_vm'][0] }}"
 
 - name: Set fact for tmp directory
   set_fact:
     tempdir: "{{ tempdiroutput.path }}"
+  remote_user: root
   delegate_to: "{{ groups['router_vm'][0] }}"
 
 - name: Start haproxy for the cluster
@@ -39,4 +43,5 @@
     volumes:
       - "{{ cluster_config_dir }}:/usr/local/etc/haproxy"
       - "{{ tempdir }}:/var/lib/haproxy"
+  remote_user: root
   delegate_to: "{{ groups['router_vm'][0] }}"
