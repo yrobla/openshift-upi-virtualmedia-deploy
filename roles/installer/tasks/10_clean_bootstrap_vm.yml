@@ -17,7 +17,7 @@
     name: "{{ item }}"
     command: destroy
   with_items: "{{ running_vms.list_vms }}"
-  when: item is search("bootstrap-{{ cluster }}")
+  when: item | search("bootstrap-{{ cluster }}")
   become: yes
 
 - name: Undefine old bootstrap VMs, if any
@@ -25,7 +25,8 @@
     name: "{{ item }}"
     command: undefine
   with_items: "{{ all_vms.list_vms }}"
-  when: item is search("bootstrap-{{ cluster }}")
+  when: item | search("bootstrap-{{ cluster }}")
+  become: yes
   become: yes
 
 - name: Find old bootstrap VM Storage
