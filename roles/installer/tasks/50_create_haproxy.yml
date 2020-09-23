@@ -11,13 +11,6 @@
   remote_user: root
   delegate_to: "{{ groups['router_vm'][0] }}"
 
-- name: Remove previous running haproxy
-  podman_container:
-    name: haproxy_{{ cluster }}
-    state: absent
-  remote_user: root
-  delegate_to: "{{ groups['router_vm'][0] }}"
-
 - name: Create haproxy directory
   file:
     path: /opt/haproxy
