@@ -3,11 +3,13 @@
   shell: "virsh list --all --name | grep -E 'master-{{ cluster }}|worker-{{ cluster }}'"
   register: all_vms
   become: yes
+  ignore_errors: true
 
 - name: Get list of all running VMs
   shell: "virsh list --name | grep -E 'master-{{ cluster }}|worker-{{ cluster }}'"
   register: running_vms
   become: yes
+  ignore_errors: true
 
 - name: Destroy old master/worker VMs, if any
   virt:

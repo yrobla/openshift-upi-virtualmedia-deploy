@@ -1,12 +1,14 @@
 ---
 - name: Get list of all VMs
   shell: "virsh list --all --name | grep router-{{ cluster }}"
+  ignore_errors: true
   register: all_vms
   become: yes
 
 - name: Get list of all running VMs
   shell: "virsh list --name | grep router-{{ cluster }}"
   register: running_vms
+  ignore_errors: true
   become: yes
 
 - name: Destroy old router VMs, if any
