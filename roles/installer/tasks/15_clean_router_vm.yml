@@ -13,14 +13,14 @@
   virt:
     name: "{{ item }}"
     command: destroy
-  with_items: "{{ running_vms.results }}"
+  with_items: "{{ running_vms.stdout_lines }}"
   become: yes
 
 - name: Undefine old router VMs, if any
   virt:
     name: "{{ item }}"
     command: undefine
-  with_items: "{{ all_vms.results }}"
+  with_items: "{{ all_vms.stdout_lines }}"
   become: yes
 
 - name: Find old bootstrap VM Storage
