@@ -23,7 +23,9 @@
     path: /opt/haproxy
     state: directory
     mode: '0755'
-  
+  remote_user: root
+  delegate_to: "{{ groups['router_vm'][0] }}"
+
 - name: Generate haproxy cfg file
   template:
     src: "{{ role_path }}/templates/haproxy.cfg.j2"
