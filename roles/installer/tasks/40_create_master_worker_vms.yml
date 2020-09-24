@@ -33,6 +33,7 @@
 - name: Create new worker qcow2 images
   command: "qemu-img create -f qcow2 {{ default_libvirt_pool_dir }}/worker-{{ cluster }}-{{ item }}.qcow2 60G"
   with_sequence: start=1 end={{ num_workers }}
+  when: num_workers|int > 0
 
 - name: Define worker vms
   virt:
@@ -54,3 +55,4 @@
     name: worker-{{ cluster }}-{{ item }}
     state: running
   with_sequence: start=1 end={{ num_workers }}
+  when: num_workers|int > 0
