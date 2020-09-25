@@ -22,4 +22,4 @@
   virt:
     name: worker-{{ cluster }}-{{ item }}
     state: running
-    with_sequence: start=1 end={{ num_workers }}
+  with_sequence: start=1 end={{ num_workers }}
