@@ -1,4 +1,4 @@
---
+---
 - name: Create temporary file for template
   tempfile:
     state: directory
