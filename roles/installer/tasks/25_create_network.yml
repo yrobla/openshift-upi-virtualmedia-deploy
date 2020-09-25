@@ -8,6 +8,10 @@
   set_fact:
     tempdir: "{{ tempdiroutput.path }}"
 
+- name: Remove previous nwfilter if exists
+  shell: "virsh nwfilter-undefine allow-api"
+  ignore_errors: true
+
 - name: Write template to temporary file
   template:
     src: "{{ role_path }}/templates/nwfilter_api.xml.j2"
@@ -15,6 +19,7 @@
 
 - name: Create nwfilter to allow 6443
   shell: "virsh nwfilter-define {{ tempdir }}/nwfilter_api.xml"
+  ignore_errors: true
 
 - name: Create default baremetal network
   virt_net:
