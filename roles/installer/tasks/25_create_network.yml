@@ -21,6 +21,11 @@
   shell: "virsh nwfilter-define {{ tempdir }}/nwfilter_api.xml"
   ignore_errors: true
 
+- name: Restart libvirtd to apply changes
+  service:
+    name: libvirtd
+    state: restarted
+
 - name: Create default baremetal network
   virt_net:
     command: define
