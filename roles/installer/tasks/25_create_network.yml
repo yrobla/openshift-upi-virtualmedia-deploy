@@ -1,6 +1,20 @@
----
+--
+- name: Create temporary file for template
+  tempfile:
+    state: directory
+  register: tempdiroutput
+
+- name: Set fact for tmp directory
+  set_fact:
+    tempdir: "{{ tempdiroutput.path }}"
+
+- name: Write template to temporary file
+  template:
+    src: "{{ role_path }}/templates/nwfilter_api.xml.j2"
+    dest: "{{ tempdir }}/nwfilter_api.xml"
+
 - name: Create nwfilter to allow 6443
-  shell: "virsh nwfilter-define {{ lookup('template', '{{ role_path }}/templates/nwfilter_api.xml.j2') }}"
+  shell: "virsh nwfilter-define {{ tempdir }}/nwfilter_api.xml"
 
 - name: Create default baremetal network
   virt_net:
