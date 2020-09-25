@@ -39,7 +39,7 @@
       <source network='{{ domain_network }}'/>
       <guest dev='eth0'/>
       <model type='virtio'/>
-      <filterref filter='allow-api'/>
+      <filterref filter='allow-api-{{ cluster }}'/>
     </interface>
     <serial type='pty'>
       <target type='isa-serial' port='0'>

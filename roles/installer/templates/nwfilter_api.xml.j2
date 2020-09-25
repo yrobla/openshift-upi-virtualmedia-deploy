@@ -1,4 +1,4 @@
-<filter name='allow-api' chain='ipv4' priority='-700'>
+<filter name='allow-api-{{ cluster }}' chain='ipv4' priority='-700'>
   <rule action='accept' direction='out' priority='100'>
     <ip srcipaddr='0.0.0.0' dstipaddr='255.255.255.255' protocol='tcp' srcportstart='6443' dstportstart='6443'/>
   </rule>

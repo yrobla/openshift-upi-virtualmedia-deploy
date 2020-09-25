@@ -9,7 +9,7 @@
     tempdir: "{{ tempdiroutput.path }}"
 
 - name: Remove previous nwfilter if exists
-  shell: "virsh nwfilter-undefine allow-api"
+  shell: "virsh nwfilter-undefine allow-api-{{ cluster }}"
   ignore_errors: true
 
 - name: Write template to temporary file
