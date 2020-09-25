@@ -1,0 +1,8 @@
+<filter name='allow-api' chain='ipv4' priority='-700'>
+  <rule action='accept' direction='out' priority='100'>
+    <ip srcipaddr='0.0.0.0' dstipaddr='255.255.255.255' protocol='tcp' srcportstart='6443' dstportstart='6443'/>
+  </rule>
+  <rule action='accept' direction='in' priority='100'>
+    <ip protocol='tcp' srcportstart='6443' dstportstart='6443'/>
+  </rule>
+</filter>

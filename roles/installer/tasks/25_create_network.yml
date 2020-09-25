@@ -1,0 +1,19 @@
+---
+- name: Create nwfilter to allow 6443
+  shell: "virsh nwfilter-define {{ lookup('template', '{{ role_path }}/templates/nwfilter_api.xml.j2') }}"
+
+- name: Create default baremetal network
+  virt_net:
+    command: define
+    name: baremetal-{{ cluster }}
+    xml: '{{ lookup("template", "{{ role_path }}/templates/network.xml.j2") }}'
+  vars:
+    network_name: baremetal-{{ cluster }}
+    gateway_with_mask: "{{ gateway_ip }}/24"
+  when: virtualized_install
+
+- name: Start baremetal network
+  virt_net:
+    command: start
+    name: baremetal-{{ cluster }}
+  when: virtualized_install
