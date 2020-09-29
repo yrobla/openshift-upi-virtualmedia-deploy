@@ -1,5 +1,6 @@
 <filter name='allow-api-{{ cluster }}' chain='ipv4' >
   <rule action='accept' direction='in'>
     <tcp  dstportstart='6443'/>
+    <tcp  dstportstart='443'/>
   </rule>
 </filter>
