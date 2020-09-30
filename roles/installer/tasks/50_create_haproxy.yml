@@ -86,4 +86,4 @@
         volumes:
           - "/opt/haproxy:/usr/local/etc/haproxy"
           - "{{ tempdir }}:/var/lib/haproxy"
-  when: expose_frontend | bool
+  when: expose_frontend is defined and expose_frontend | bool
