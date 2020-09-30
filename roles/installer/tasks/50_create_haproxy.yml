@@ -53,3 +53,37 @@
       - "{{ tempdir }}:/var/lib/haproxy"
   remote_user: root
   delegate_to: "{{ groups['router_vm'][0] }}"
+
+- name: Expose vms to the outside
+  block:
+    - name: Create haproxy directory
+      file:
+        path: /opt/haproxy
+        state: directory
+        mode: '0755'
+
+    - name: Generate haproxy cfg file
+      template:
+        src: "{{ role_path }}/templates/haproxy_outside.cfg.j2"
+        dest: "/opt/haproxy/haproxy.cfg"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+
+    - name: Create tmp directory for haproxy
+      tempfile:
+        state: directory
+      register: tempdiroutput
+
+    - name: Set fact for tmp directory
+      set_fact:
+        tempdir: "{{ tempdiroutput.path }}"
+
+    - name: Start haproxy for the cluster
+      podman_container:
+        name: haproxy_{{ cluster }}
+        image: haproxy:1.7
+        network: host
+        volumes:
+          - "/opt/haproxy:/usr/local/etc/haproxy"
+          - "{{ tempdir }}:/var/lib/haproxy"
+  when: expose_frontend | bool
