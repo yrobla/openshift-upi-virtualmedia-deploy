@@ -10,9 +10,9 @@
     autostart: yes
   with_sequence: start=1 end={{ num_workers }}
   vars:
-    domain_name: worker-{{ cluster }}-{{ item }}
-    domain_memory: {{ worker_memory }}
-    domain_cpu: {{ worker_cpu }}
+    domain_name: "worker-{{ cluster }}-{{ item }}"
+    domain_memory: "{{ worker_memory }}"
+    domain_cpu: "{{ worker_cpu }}"
     domain_iso: "{{ cluster_config_dir }}/generated_isos/worker.iso"
     domain_disk: "{{ default_libvirt_pool_dir }}/worker-{{ cluster }}-{{ item }}.qcow2"
     domain_network: "baremetal-{{ cluster }}"
